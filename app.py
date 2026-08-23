@@ -350,8 +350,11 @@ if job_description.strip() and uploaded_files:
 
                 except Exception as match_error:
                     st.warning(
-                        "AI matching is temporarily unavailable. "
-                        "Please configure a valid LLM API key."
+                        "AI matching is currently unavailable."
+                    )
+
+                    st.caption(
+                        f"Matching status: {match_error}"
                     )
 
             except Exception as exc:
