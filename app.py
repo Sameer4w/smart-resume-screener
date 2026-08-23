@@ -104,6 +104,16 @@ else:
             f"{SHORTLIST_THRESHOLD}/10 shortlist threshold."
         )
 
+    if ranked_candidates:
+        top_candidate = ranked_candidates[0]
+
+        st.markdown("### 🥇 Top Candidate")
+
+        st.info(
+            f"**{top_candidate["name"]}** — "
+            f"{top_candidate["match_score"]}/10"
+        )
+
     st.markdown("### 📋 All Ranked Candidates")
 
     for rank, candidate in enumerate(ranked_candidates, start=1):
