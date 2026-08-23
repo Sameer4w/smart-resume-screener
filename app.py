@@ -72,6 +72,10 @@ with st.expander("View Stored Candidates"):
 
 st.subheader("🏆 Candidate Ranking")
 
+if job_description.strip():
+    with st.expander("📋 Current Job Description", expanded=False):
+        st.write(job_description)
+
 ranked_candidates = get_ranked_resumes()
 
 SHORTLIST_THRESHOLD = 7.0
