@@ -105,6 +105,29 @@ else:
         )
 
     if ranked_candidates:
+        excellent_count = sum(
+            1 for candidate in ranked_candidates
+            if candidate["match_score"] >= 8
+        )
+
+        good_count = sum(
+            1 for candidate in ranked_candidates
+            if 6 <= candidate["match_score"] < 8
+        )
+
+        low_count = sum(
+            1 for candidate in ranked_candidates
+            if candidate["match_score"] < 6
+        )
+
+        st.markdown("### 📈 Match Distribution")
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric("Excellent (8–10)", excellent_count)
+        col2.metric("Good (6–7.9)", good_count)
+        col3.metric("Low (<6)", low_count)
+
         top_candidate = ranked_candidates[0]
 
         st.markdown("### 🥇 Top Candidate")
