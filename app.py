@@ -8,6 +8,7 @@ from database import (
     save_resume,
     get_all_resumes,
     get_resume_count,
+    get_ranked_resumes,
     save_match_result,
 )
 from llm_matcher import match_resume_to_job
@@ -68,6 +69,38 @@ with st.expander("View Stored Candidates"):
                 )
             )
             st.divider()
+
+st.subheader("🏆 Candidate Ranking")
+
+ranked_candidates = get_ranked_resumes()
+
+if not ranked_candidates:
+    st.info("No candidates have been scored yet.")
+else:
+    for rank, candidate in enumerate(ranked_candidates, start=1):
+        score = candidate["match_score"]
+
+        st.markdown(
+            f"**#{rank} — {candidate["name"]}**"
+        )
+
+        st.write(
+            f"Match Score: **{score}/10**"
+        )
+
+        if candidate["matching_skills"]:
+            st.write(
+                "Matching Skills: "
+                + ", ".join(candidate["matching_skills"])
+            )
+
+        if candidate["missing_skills"]:
+            st.write(
+                "Missing Skills: "
+                + ", ".join(candidate["missing_skills"])
+            )
+
+        st.divider()
 
 st.subheader("Job Description")
 

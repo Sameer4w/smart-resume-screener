@@ -230,3 +230,39 @@ def save_match_result(
 
     finally:
         connection.close()
+
+def get_ranked_resumes() -> List[Dict]:
+    """Return resumes ranked by match score."""
+    connection = get_connection()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT *
+            FROM resumes
+            WHERE match_score IS NOT NULL
+            ORDER BY match_score DESC, created_at DESC
+            """
+        ).fetchall()
+
+        results = []
+
+        for row in rows:
+            item = dict(row)
+
+            item["skills"] = json.loads(item["skills"] or "[]")
+            item["education"] = json.loads(item["education"] or "[]")
+            item["experience"] = json.loads(item["experience"] or "[]")
+            item["matching_skills"] = json.loads(
+                item["matching_skills"] or "[]"
+            )
+            item["missing_skills"] = json.loads(
+                item["missing_skills"] or "[]"
+            )
+
+            results.append(item)
+
+        return results
+
+    finally:
+        connection.close()
