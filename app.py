@@ -76,6 +76,21 @@ ranked_candidates = get_ranked_resumes()
 
 SHORTLIST_THRESHOLD = 7.0
 
+if ranked_candidates:
+    min_score = st.slider(
+        "Minimum Match Score",
+        min_value=0.0,
+        max_value=10.0,
+        value=0.0,
+        step=0.5,
+    )
+
+    ranked_candidates = [
+        candidate
+        for candidate in ranked_candidates
+        if candidate["match_score"] >= min_score
+    ]
+
 if not ranked_candidates:
     st.info("No candidates have been scored yet.")
 else:
