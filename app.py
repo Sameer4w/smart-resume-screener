@@ -88,6 +88,10 @@ else:
             f"Match Score: **{score}/10**"
         )
 
+        st.write(
+            f"Email: {candidate["email"] or "Not available"}"
+        )
+
         if candidate["matching_skills"]:
             st.write(
                 "Matching Skills: "
@@ -98,6 +102,12 @@ else:
             st.write(
                 "Missing Skills: "
                 + ", ".join(candidate["missing_skills"])
+            )
+
+        if candidate["justification"]:
+            st.write(
+                "Justification:",
+                candidate["justification"]
             )
 
         st.divider()
