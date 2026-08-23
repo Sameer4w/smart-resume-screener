@@ -31,3 +31,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.log
+
+# Runtime database files
+data/*.db
