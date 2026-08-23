@@ -70,158 +70,6 @@ with st.expander("View Stored Candidates"):
             )
             st.divider()
 
-st.subheader("🏆 Candidate Ranking")
-
-if job_description.strip():
-    with st.expander("📋 Current Job Description", expanded=False):
-        st.write(job_description)
-
-ranked_candidates = get_ranked_resumes()
-
-SHORTLIST_THRESHOLD = 7.0
-
-if ranked_candidates:
-    min_score = st.slider(
-        "Minimum Match Score",
-        min_value=0.0,
-        max_value=10.0,
-        value=0.0,
-        step=0.5,
-    )
-
-    ranked_candidates = [
-        candidate
-        for candidate in ranked_candidates
-        if candidate["match_score"] >= min_score
-    ]
-
-if not ranked_candidates:
-    st.info("No candidates have been scored yet.")
-else:
-    shortlisted_candidates = [
-        candidate
-        for candidate in ranked_candidates
-        if candidate["match_score"] >= SHORTLIST_THRESHOLD
-    ]
-
-    st.metric(
-        "Shortlisted Candidates",
-        len(shortlisted_candidates),
-    )
-
-    if shortlisted_candidates:
-        st.markdown("### ⭐ Shortlisted Candidates")
-
-        for candidate in shortlisted_candidates:
-            st.success(
-                f"{candidate["name"]} — "
-                f"{candidate["match_score"]}/10"
-            )
-    else:
-        st.info(
-            f"No candidates reached the "
-            f"{SHORTLIST_THRESHOLD}/10 shortlist threshold."
-        )
-
-    if ranked_candidates:
-        excellent_count = sum(
-            1 for candidate in ranked_candidates
-            if candidate["match_score"] >= 8
-        )
-
-        good_count = sum(
-            1 for candidate in ranked_candidates
-            if 6 <= candidate["match_score"] < 8
-        )
-
-        low_count = sum(
-            1 for candidate in ranked_candidates
-            if candidate["match_score"] < 6
-        )
-
-        st.markdown("### 📈 Match Distribution")
-
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric("Excellent (8–10)", excellent_count)
-        col2.metric("Good (6–7.9)", good_count)
-        col3.metric("Low (<6)", low_count)
-
-        top_candidate = ranked_candidates[0]
-
-        st.markdown("### 🥇 Top Candidate")
-
-        st.info(
-            f"**{top_candidate["name"]}** — "
-            f"{top_candidate["match_score"]}/10"
-        )
-
-    st.markdown("### 📋 All Ranked Candidates")
-
-    ranking_table = []
-
-    for rank, candidate in enumerate(ranked_candidates, start=1):
-        ranking_table.append(
-            {
-                "Rank": rank,
-                "Candidate": candidate["name"],
-                "Email": candidate["email"] or "Not available",
-                "Score": candidate["match_score"],
-                "Status": (
-                    "Shortlisted"
-                    if candidate["match_score"] >= SHORTLIST_THRESHOLD
-                    else "Not Shortlisted"
-                ),
-                "Matching Skills": ", ".join(
-                    candidate["matching_skills"]
-                ),
-                "Missing Skills": ", ".join(
-                    candidate["missing_skills"]
-                ),
-            }
-        )
-
-    st.dataframe(
-        ranking_table,
-        use_container_width=True,
-        hide_index=True,
-    )
-
-    for rank, candidate in enumerate(ranked_candidates, start=1):
-        score = candidate["match_score"]
-
-        st.markdown(
-            f"**#{rank} — {candidate["name"]}**"
-        )
-
-        st.write(
-            f"Match Score: **{score}/10**"
-        )
-
-        st.write(
-            f"Email: {candidate["email"] or "Not available"}"
-        )
-
-        if candidate["matching_skills"]:
-            st.write(
-                "Matching Skills: "
-                + ", ".join(candidate["matching_skills"])
-            )
-
-        if candidate["missing_skills"]:
-            st.write(
-                "Missing Skills: "
-                + ", ".join(candidate["missing_skills"])
-            )
-
-        if candidate["justification"]:
-            st.write(
-                "Justification:",
-                candidate["justification"]
-            )
-
-        st.divider()
-
 st.subheader("Job Description")
 
 job_description = st.text_area(
@@ -229,6 +77,10 @@ job_description = st.text_area(
     height=250,
     placeholder="Paste the job description here...",
 )
+
+if job_description.strip():
+    with st.expander("📋 Current Job Description", expanded=False):
+        st.write(job_description)
 
 st.subheader("Resume Upload")
 
@@ -376,3 +228,153 @@ if job_description.strip() and uploaded_files:
             st.info(
                 f"{processed_count} resume(s) processed and stored."
             )
+
+
+st.subheader("🏆 Candidate Ranking")
+
+ranked_candidates = get_ranked_resumes()
+
+SHORTLIST_THRESHOLD = 7.0
+
+if ranked_candidates:
+    min_score = st.slider(
+        "Minimum Match Score",
+        min_value=0.0,
+        max_value=10.0,
+        value=0.0,
+        step=0.5,
+    )
+
+    ranked_candidates = [
+        candidate
+        for candidate in ranked_candidates
+        if candidate["match_score"] >= min_score
+    ]
+
+if not ranked_candidates:
+    st.info("No candidates have been scored yet.")
+else:
+    shortlisted_candidates = [
+        candidate
+        for candidate in ranked_candidates
+        if candidate["match_score"] >= SHORTLIST_THRESHOLD
+    ]
+
+    st.metric(
+        "Shortlisted Candidates",
+        len(shortlisted_candidates),
+    )
+
+    if shortlisted_candidates:
+        st.markdown("### ⭐ Shortlisted Candidates")
+
+        for candidate in shortlisted_candidates:
+            st.success(
+                f"{candidate["name"]} — "
+                f"{candidate["match_score"]}/10"
+            )
+    else:
+        st.info(
+            f"No candidates reached the "
+            f"{SHORTLIST_THRESHOLD}/10 shortlist threshold."
+        )
+
+    if ranked_candidates:
+        excellent_count = sum(
+            1 for candidate in ranked_candidates
+            if candidate["match_score"] >= 8
+        )
+
+        good_count = sum(
+            1 for candidate in ranked_candidates
+            if 6 <= candidate["match_score"] < 8
+        )
+
+        low_count = sum(
+            1 for candidate in ranked_candidates
+            if candidate["match_score"] < 6
+        )
+
+        st.markdown("### 📈 Match Distribution")
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric("Excellent (8–10)", excellent_count)
+        col2.metric("Good (6–7.9)", good_count)
+        col3.metric("Low (<6)", low_count)
+
+        top_candidate = ranked_candidates[0]
+
+        st.markdown("### 🥇 Top Candidate")
+
+        st.info(
+            f"**{top_candidate["name"]}** — "
+            f"{top_candidate["match_score"]}/10"
+        )
+
+    st.markdown("### 📋 All Ranked Candidates")
+
+    ranking_table = []
+
+    for rank, candidate in enumerate(ranked_candidates, start=1):
+        ranking_table.append(
+            {
+                "Rank": rank,
+                "Candidate": candidate["name"],
+                "Email": candidate["email"] or "Not available",
+                "Score": candidate["match_score"],
+                "Status": (
+                    "Shortlisted"
+                    if candidate["match_score"] >= SHORTLIST_THRESHOLD
+                    else "Not Shortlisted"
+                ),
+                "Matching Skills": ", ".join(
+                    candidate["matching_skills"]
+                ),
+                "Missing Skills": ", ".join(
+                    candidate["missing_skills"]
+                ),
+            }
+        )
+
+    st.dataframe(
+        ranking_table,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    for rank, candidate in enumerate(ranked_candidates, start=1):
+        score = candidate["match_score"]
+
+        st.markdown(
+            f"**#{rank} — {candidate["name"]}**"
+        )
+
+        st.write(
+            f"Match Score: **{score}/10**"
+        )
+
+        st.write(
+            f"Email: {candidate["email"] or "Not available"}"
+        )
+
+        if candidate["matching_skills"]:
+            st.write(
+                "Matching Skills: "
+                + ", ".join(candidate["matching_skills"])
+            )
+
+        if candidate["missing_skills"]:
+            st.write(
+                "Missing Skills: "
+                + ", ".join(candidate["missing_skills"])
+            )
+
+        if candidate["justification"]:
+            st.write(
+                "Justification:",
+                candidate["justification"]
+            )
+
+        st.divider()
+
