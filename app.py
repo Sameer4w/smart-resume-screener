@@ -74,9 +74,38 @@ st.subheader("🏆 Candidate Ranking")
 
 ranked_candidates = get_ranked_resumes()
 
+SHORTLIST_THRESHOLD = 7.0
+
 if not ranked_candidates:
     st.info("No candidates have been scored yet.")
 else:
+    shortlisted_candidates = [
+        candidate
+        for candidate in ranked_candidates
+        if candidate["match_score"] >= SHORTLIST_THRESHOLD
+    ]
+
+    st.metric(
+        "Shortlisted Candidates",
+        len(shortlisted_candidates),
+    )
+
+    if shortlisted_candidates:
+        st.markdown("### ⭐ Shortlisted Candidates")
+
+        for candidate in shortlisted_candidates:
+            st.success(
+                f"{candidate["name"]} — "
+                f"{candidate["match_score"]}/10"
+            )
+    else:
+        st.info(
+            f"No candidates reached the "
+            f"{SHORTLIST_THRESHOLD}/10 shortlist threshold."
+        )
+
+    st.markdown("### 📋 All Ranked Candidates")
+
     for rank, candidate in enumerate(ranked_candidates, start=1):
         score = candidate["match_score"]
 
