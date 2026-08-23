@@ -139,3 +139,17 @@ def get_resume(resume_id: int) -> Optional[Dict]:
 
     finally:
         connection.close()
+
+def get_resume_count() -> int:
+    """Return the total number of stored resumes."""
+    connection = get_connection()
+
+    try:
+        row = connection.execute(
+            "SELECT COUNT(*) AS count FROM resumes"
+        ).fetchone()
+
+        return int(row["count"])
+
+    finally:
+        connection.close()

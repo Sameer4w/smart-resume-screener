@@ -3,7 +3,7 @@ import tempfile
 
 import streamlit as st
 
-from database import initialize_database, save_resume
+from database import initialize_database, save_resume, get_all_resumes, get_resume_count
 from llm_matcher import match_resume_to_job
 from resume_extractor import extract_candidate_data
 from resume_parser import extract_resume_text
@@ -27,6 +27,41 @@ st.write(
 )
 
 st.divider()
+
+st.subheader("📊 Candidate Database")
+
+candidate_count = get_resume_count()
+
+st.metric(
+    "Stored Candidates",
+    candidate_count,
+)
+
+with st.expander("View Stored Candidates"):
+    stored_candidates = get_all_resumes()
+
+    if not stored_candidates:
+        st.info("No candidates have been stored yet.")
+    else:
+        for candidate in stored_candidates:
+            st.markdown(
+                f"**{candidate["id"]}. {candidate["name"]}**"
+            )
+            st.write(
+                f"Email: {candidate["email"] or "Not available"}"
+            )
+            st.write(
+                f"Phone: {candidate["phone"] or "Not available"}"
+            )
+            st.write(
+                "Skills: "
+                + (
+                    ", ".join(candidate["skills"])
+                    if candidate["skills"]
+                    else "Not available"
+                )
+            )
+            st.divider()
 
 st.subheader("Job Description")
 
