@@ -139,6 +139,35 @@ else:
 
     st.markdown("### 📋 All Ranked Candidates")
 
+    ranking_table = []
+
+    for rank, candidate in enumerate(ranked_candidates, start=1):
+        ranking_table.append(
+            {
+                "Rank": rank,
+                "Candidate": candidate["name"],
+                "Email": candidate["email"] or "Not available",
+                "Score": candidate["match_score"],
+                "Status": (
+                    "Shortlisted"
+                    if candidate["match_score"] >= SHORTLIST_THRESHOLD
+                    else "Not Shortlisted"
+                ),
+                "Matching Skills": ", ".join(
+                    candidate["matching_skills"]
+                ),
+                "Missing Skills": ", ".join(
+                    candidate["missing_skills"]
+                ),
+            }
+        )
+
+    st.dataframe(
+        ranking_table,
+        use_container_width=True,
+        hide_index=True,
+    )
+
     for rank, candidate in enumerate(ranked_candidates, start=1):
         score = candidate["match_score"]
 
