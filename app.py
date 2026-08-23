@@ -3,7 +3,13 @@ import tempfile
 
 import streamlit as st
 
-from database import initialize_database, save_resume, get_all_resumes, get_resume_count
+from database import (
+    initialize_database,
+    save_resume,
+    get_all_resumes,
+    get_resume_count,
+    save_match_result,
+)
 from llm_matcher import match_resume_to_job
 from resume_extractor import extract_candidate_data
 from resume_parser import extract_resume_text
@@ -148,6 +154,12 @@ if job_description.strip() and uploaded_files:
                     match_result = match_resume_to_job(
                         resume_text=resume_text,
                         job_description=job_description,
+                    )
+
+                    save_match_result(
+                        resume_id=resume_id,
+                        job_description=job_description,
+                        match_result=match_result,
                     )
 
                     st.metric(

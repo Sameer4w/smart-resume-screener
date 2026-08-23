@@ -18,6 +18,33 @@ def get_connection() -> sqlite3.Connection:
     return connection
 
 
+def migrate_database(connection: sqlite3.Connection) -> None:
+    """Add new match-result columns to an existing database."""
+    existing_columns = {
+        row["name"]
+        for row in connection.execute(
+            "PRAGMA table_info(resumes)"
+        ).fetchall()
+    }
+
+    new_columns = {
+        "match_score": "REAL",
+        "match_summary": "TEXT",
+        "matching_skills": "TEXT",
+        "missing_skills": "TEXT",
+        "experience_match": "TEXT",
+        "education_match": "TEXT",
+        "justification": "TEXT",
+        "job_description": "TEXT",
+    }
+
+    for column_name, column_type in new_columns.items():
+        if column_name not in existing_columns:
+            connection.execute(
+                f"ALTER TABLE resumes ADD COLUMN {column_name} {column_type}"
+            )
+
+
 def initialize_database() -> None:
     """Create the resumes table if it does not exist."""
     connection = get_connection()
@@ -34,11 +61,20 @@ def initialize_database() -> None:
                 education TEXT,
                 experience TEXT,
                 resume_text TEXT NOT NULL,
+                match_score REAL,
+                match_summary TEXT,
+                matching_skills TEXT,
+                missing_skills TEXT,
+                experience_match TEXT,
+                education_match TEXT,
+                justification TEXT,
+                job_description TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
         )
 
+        migrate_database(connection)
         connection.commit()
 
     finally:
@@ -150,6 +186,47 @@ def get_resume_count() -> int:
         ).fetchone()
 
         return int(row["count"])
+
+    finally:
+        connection.close()
+
+def save_match_result(
+    resume_id: int,
+    job_description: str,
+    match_result: Dict,
+) -> None:
+    """Save an LLM match result for a stored resume."""
+    connection = get_connection()
+
+    try:
+        connection.execute(
+            """
+            UPDATE resumes
+            SET
+                match_score = ?,
+                match_summary = ?,
+                matching_skills = ?,
+                missing_skills = ?,
+                experience_match = ?,
+                education_match = ?,
+                justification = ?,
+                job_description = ?
+            WHERE id = ?
+            """,
+            (
+                match_result.get("match_score"),
+                match_result.get("summary", ""),
+                json.dumps(match_result.get("matching_skills", [])),
+                json.dumps(match_result.get("missing_skills", [])),
+                match_result.get("experience_match", ""),
+                match_result.get("education_match", ""),
+                match_result.get("justification", ""),
+                job_description,
+                resume_id,
+            ),
+        )
+
+        connection.commit()
 
     finally:
         connection.close()
