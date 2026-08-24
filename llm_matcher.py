@@ -43,7 +43,6 @@ KNOWN_SKILLS = [
     "numpy",
     "scikit-learn",
     "rest api",
-    "rest",
     "linux",
 ]
 
@@ -51,6 +50,7 @@ KNOWN_SKILLS = [
 SKILL_ALIASES = {
     "sql": ["sql"],
     "git": ["git"],
+    "rest api": ["rest api", "restful api", "restful", "rest"],
 }
 
 
