@@ -228,14 +228,14 @@ def calculate_score(
     job_lower = job_description.lower()
 
     # ---------------------------------------------------------
-    # 1. Technical skill match - 50%
+    # 1. Technical skill match - 60%
     # ---------------------------------------------------------
     if required_skills:
         skill_ratio = len(matching_skills) / len(required_skills)
     else:
         skill_ratio = 0.0
 
-    skill_score = skill_ratio * 5.0
+    skill_score = skill_ratio * 6.0
 
     # ---------------------------------------------------------
     # 2. Relevant experience / project evidence - 20%
@@ -250,7 +250,6 @@ def calculate_score(
         "internship",
         "application",
         "system",
-        "worked",
     ]
 
     experience_evidence = sum(
@@ -264,16 +263,21 @@ def calculate_score(
         1.0
     ) * 2.0
 
-    # Give additional credit when matching skills appear
-    # in the resume together with project/development evidence.
-    if matching_skills and experience_evidence:
-        experience_score = min(
-            2.0,
-            experience_score + 0.5
+    if matching_skills:
+        matching_skill_evidence = sum(
+            1
+            for skill in matching_skills
+            if skill.lower() in resume_lower
         )
 
+        if matching_skill_evidence > 0:
+            experience_score = min(
+                2.0,
+                experience_score + 0.5
+            )
+
     # ---------------------------------------------------------
-    # 3. Education relevance - 15%
+    # 3. Education relevance - 10%
     # ---------------------------------------------------------
     education_terms = [
         "b.tech",
@@ -287,12 +291,6 @@ def calculate_score(
         "master",
     ]
 
-    resume_education_terms = [
-        term
-        for term in education_terms
-        if term in resume_lower
-    ]
-
     job_education_terms = [
         term
         for term in education_terms
@@ -300,32 +298,24 @@ def calculate_score(
     ]
 
     if not job_education_terms:
-        education_score = 1.5
+        education_score = 1.0
     elif any(
         term in resume_lower
         for term in job_education_terms
     ):
-        education_score = 1.5
-    elif resume_education_terms:
-        education_score = 0.75
+        education_score = 1.0
     else:
-        education_score = 0.0
+        education_score = 0.5
 
     # ---------------------------------------------------------
-    # 4. Overall relevance - 15%
+    # 4. Overall relevance - 10%
     # ---------------------------------------------------------
     job_words = set(
-        re.findall(
-            r"[a-zA-Z]{4,}",
-            job_lower,
-        )
+        re.findall(r"[a-zA-Z]{4,}", job_lower)
     )
 
     resume_words = set(
-        re.findall(
-            r"[a-zA-Z]{4,}",
-            resume_lower,
-        )
+        re.findall(r"[a-zA-Z]{4,}", resume_lower)
     )
 
     if job_words:
@@ -338,7 +328,7 @@ def calculate_score(
     relevance_score = min(
         overlap_ratio,
         1.0
-    ) * 1.5
+    ) * 1.0
 
     # ---------------------------------------------------------
     # Final weighted score
@@ -350,7 +340,6 @@ def calculate_score(
         + relevance_score
     )
 
-    # Convert 0-10 weighted score to integer 1-10.
     score = round(total_score)
 
     return max(1, min(10, score))
