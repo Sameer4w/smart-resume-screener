@@ -56,6 +56,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
+st.markdown("""
+<style>
+.hero-title {
+    color: #4da3ff !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ============================================================
 # HERO HEADER
 # ============================================================
