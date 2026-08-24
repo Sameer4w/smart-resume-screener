@@ -17,7 +17,6 @@ KNOWN_SKILLS = [
     "react",
     "angular",
     "vue",
-    "node.js",
     "nodejs",
     "fastapi",
     "flask",
@@ -221,8 +220,8 @@ def calculate_score(
     matching_skills: List[str],
     resume_text: str,
     job_description: str,
-) -> int:
-    """Calculate a weighted local resume-job match score."""
+) -> Dict:
+    """Calculate weighted score and return its breakdown."""
 
     resume_lower = resume_text.lower()
     job_lower = job_description.lower()
@@ -342,12 +341,21 @@ def calculate_score(
 
     score = round(total_score)
 
-    return max(1, min(10, score))
+    score = max(1, min(10, score))
+
+    return {
+        "score": score,
+        "technical_skills": round(skill_score, 2),
+        "experience": round(experience_score, 2),
+        "education": round(education_score, 2),
+        "relevance": round(relevance_score, 2),
+    }
 
 def match_resume_to_job(
     resume_text: str,
     job_description: str,
     model: str = "local",
+    resume_skills: List[str] = None,
 ) -> Dict:
 
     if not resume_text.strip():
@@ -356,7 +364,13 @@ def match_resume_to_job(
     if not job_description.strip():
         raise ValueError("Job description cannot be empty")
 
-    resume_skills = extract_resume_skills(resume_text)
+    if resume_skills is None:
+        resume_skills = extract_resume_skills(resume_text)
+
+    resume_skills = [
+        skill.lower()
+        for skill in resume_skills
+    ]
 
     required_skills = extract_required_skills(
         job_description
@@ -374,12 +388,14 @@ def match_resume_to_job(
         if skill not in resume_skills
     ]
 
-    score = calculate_score(
+    score_breakdown = calculate_score(
         required_skills,
         matching_skills,
         resume_text,
         job_description,
     )
+
+    score = score_breakdown["score"]
 
     if score >= 9:
         summary = "Exceptional alignment with the job requirements."
@@ -428,6 +444,12 @@ def match_resume_to_job(
 
     return {
         "match_score": score,
+        "score_breakdown": {
+            "technical_skills": score_breakdown["technical_skills"],
+            "experience": score_breakdown["experience"],
+            "education": score_breakdown["education"],
+            "relevance": score_breakdown["relevance"],
+        },
         "summary": summary,
         "matching_skills": matching_skills,
         "missing_skills": missing_skills,

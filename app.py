@@ -170,6 +170,7 @@ if job_description.strip() and uploaded_files:
                     match_result = match_resume_to_job(
                         resume_text=resume_text,
                         job_description=job_description,
+                        resume_skills=candidate["skills"],
                     )
 
                     save_match_result(
@@ -182,6 +183,36 @@ if job_description.strip() and uploaded_files:
                         "Match Score",
                         f"{match_result['match_score']}/10",
                     )
+
+                    # Score Breakdown
+                    breakdown = match_result.get("score_breakdown", {})
+
+                    if breakdown:
+                        st.markdown("### 📊 Score Breakdown")
+
+                        col1, col2 = st.columns(2)
+
+                        with col1:
+                            st.metric(
+                                "Technical Skills",
+                                f"{breakdown.get('technical_skills', 0):.2f} / 6.00",
+                            )
+
+                            st.metric(
+                                "Experience / Projects",
+                                f"{breakdown.get('experience', 0):.2f} / 2.00",
+                            )
+
+                        with col2:
+                            st.metric(
+                                "Education",
+                                f"{breakdown.get('education', 0):.2f} / 1.00",
+                            )
+
+                            st.metric(
+                                "Overall Relevance",
+                                f"{breakdown.get('relevance', 0):.2f} / 1.00",
+                            )
 
                     st.write(
                         "**Summary:**",
