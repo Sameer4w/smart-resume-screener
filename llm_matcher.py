@@ -172,6 +172,7 @@ def extract_experience_match(
     job_description: str,
     matching_skills: List[str],
 ) -> str:
+    """Evaluate experience using project evidence and matched skills."""
 
     resume_lower = resume_text.lower()
 
@@ -200,20 +201,34 @@ def extract_experience_match(
             "to the job requirements was detected in the resume."
         )
 
-    if matching_skills:
+    if not matching_skills:
         return (
-            "The resume contains relevant project or development "
-            "experience involving "
-            + ", ".join(matching_skills[:6])
-            + ", which supports the technical requirements of the role."
+            "The resume contains project or development experience, "
+            "but no strong technical overlap with the job requirements "
+            "was detected."
         )
 
-    return (
-        "The resume contains project or development experience, "
-        "but no strong technical overlap with the job requirements "
-        "was detected."
+    # Count how many matched skills have supporting evidence
+    # somewhere in the resume.
+    skill_evidence = sum(
+        1
+        for skill in matching_skills
+        if contains_term(resume_text, skill)
     )
 
+    if skill_evidence >= 4:
+        strength = "strong"
+    elif skill_evidence >= 2:
+        strength = "relevant"
+    else:
+        strength = "limited"
+
+    return (
+        f"The resume contains {strength} project or development "
+        f"experience involving "
+        + ", ".join(matching_skills[:6])
+        + ", which supports the technical requirements of the role."
+    )
 
 def calculate_score(
     required_skills: List[str],
