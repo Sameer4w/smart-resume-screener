@@ -4,6 +4,7 @@ import tempfile
 import streamlit as st
 
 from database import (
+    find_existing_resume,
     initialize_database,
     save_resume,
     get_all_resumes,
@@ -132,10 +133,20 @@ if job_description.strip() and uploaded_files:
                     uploaded_file.name
                 )[0]
 
-                resume_id = save_resume(
-                    candidate,
-                    resume_text,
-                )
+                existing_resume = find_existing_resume(resume_text)
+
+                if existing_resume:
+                    resume_id = existing_resume["id"]
+
+                    st.info(
+                        f"{uploaded_file.name} already exists in the database. "
+                        f"Using existing candidate ID: {resume_id}."
+                    )
+                else:
+                    resume_id = save_resume(
+                        candidate,
+                        resume_text,
+                    )
 
                 processed_count += 1
 

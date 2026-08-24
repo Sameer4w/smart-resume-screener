@@ -81,6 +81,37 @@ def initialize_database() -> None:
         connection.close()
 
 
+
+def find_existing_resume(resume_text: str) -> Optional[Dict]:
+    """Find an existing resume with identical extracted text."""
+    connection = get_connection()
+
+    try:
+        row = connection.execute(
+            """
+            SELECT *
+            FROM resumes
+            WHERE resume_text = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (resume_text,),
+        ).fetchone()
+
+        if row is None:
+            return None
+
+        item = dict(row)
+
+        item["skills"] = json.loads(item["skills"] or "[]")
+        item["education"] = json.loads(item["education"] or "[]")
+        item["experience"] = json.loads(item["experience"] or "[]")
+
+        return item
+
+    finally:
+        connection.close()
+
 def save_resume(candidate: Dict, resume_text: str) -> int:
     """Save parsed resume information and return its database ID."""
     connection = get_connection()
