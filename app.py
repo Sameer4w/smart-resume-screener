@@ -353,6 +353,139 @@ else:
             f"{top_candidate["match_score"]}/10"
         )
 
+    # Candidate Recommendation
+    st.markdown("### 🥇 Candidate Recommendation")
+
+    if ranked_candidates:
+        best_candidate = ranked_candidates[0]
+
+        st.success(
+            f"Recommended Candidate: "
+            f"{best_candidate["name"]} — "
+            f"{best_candidate["match_score"]}/10"
+        )
+
+        st.write(
+            "**Why this candidate?**"
+        )
+
+        st.write(
+            "This candidate achieved the highest match score "
+            "among the evaluated candidates."
+        )
+
+        if best_candidate["matching_skills"]:
+            st.write(
+                "**Strong Matching Skills:** "
+                + ", ".join(
+                    best_candidate["matching_skills"]
+                )
+            )
+
+        if best_candidate["missing_skills"]:
+            st.write(
+                "**Skills to Improve:** "
+                + ", ".join(
+                    best_candidate["missing_skills"]
+                )
+            )
+        else:
+            st.write(
+                "**Skills to Improve:** None identified"
+            )
+
+        breakdown = {
+            "Technical Skills": best_candidate.get(
+                "technical_skills_score", 0
+            ),
+            "Experience": best_candidate.get(
+                "experience_score", 0
+            ),
+            "Education": best_candidate.get(
+                "education_score", 0
+            ),
+            "Relevance": best_candidate.get(
+                "relevance_score", 0
+            ),
+        }
+
+        st.write("**Score Breakdown:**")
+
+        for component, value in breakdown.items():
+            st.write(
+                f"- {component}: {value}"
+            )
+
+        if len(ranked_candidates) >= 2:
+            second_candidate = ranked_candidates[1]
+
+            score_difference = (
+                best_candidate["match_score"]
+                - second_candidate["match_score"]
+            )
+
+            st.info(
+                f"Score advantage over the next candidate: "
+                f"{score_difference:.1f} points"
+            )
+
+        # Recruiter Decision
+        st.markdown("### 🧑‍💼 Recruiter Decision")
+
+        best_score = best_candidate["match_score"]
+        missing_count = len(
+            best_candidate["missing_skills"]
+        )
+
+        if best_score >= 8 and missing_count == 0:
+            decision = "🥇 Strongly Recommended"
+            explanation = (
+                "The candidate has excellent alignment with the "
+                "job requirements and no identified skill gaps."
+            )
+        elif best_score >= 7:
+            decision = "✅ Recommended with Reservations"
+            explanation = (
+                "The candidate has good overall alignment, but "
+                "some skill or experience gaps may need attention."
+            )
+        elif best_score >= 5:
+            decision = "⚠️ Consider for Further Review"
+            explanation = (
+                "The candidate has partial alignment with the role. "
+                "Additional evaluation is recommended."
+            )
+        else:
+            decision = "❌ Not Recommended"
+            explanation = (
+                "The candidate has limited alignment with the "
+                "current job requirements."
+            )
+
+        st.info(
+            f"**{decision}**"
+        )
+
+        st.write(
+            f"**Overall Score:** {best_score}/10"
+        )
+
+        st.write(
+            f"**Decision Reason:** {explanation}"
+        )
+
+        if missing_count:
+            st.write(
+                "**Key Skill Gaps:** "
+                + ", ".join(
+                    best_candidate["missing_skills"]
+                )
+            )
+        else:
+            st.write(
+                "**Key Skill Gaps:** None identified"
+            )
+
     st.markdown("### 📋 All Ranked Candidates")
 
     ranking_table = []
