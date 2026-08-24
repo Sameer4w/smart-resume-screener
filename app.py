@@ -11,268 +11,46 @@ import streamlit as st
 st.markdown("""
 <style>
 
-/* -----------------------------------------------------------
-   Global
------------------------------------------------------------ */
-
-.main {
-    background: #f7f9fc;
-}
-
-.block-container {
-    max-width: 1400px;
-    padding-top: 2rem;
-    padding-bottom: 4rem;
-}
-
-/* -----------------------------------------------------------
-   Main Header
------------------------------------------------------------ */
-
-.hero {
-    background: linear-gradient(
-        135deg,
-        #0f172a 0%,
-        #1e3a8a 55%,
-        #2563eb 100%
-    );
-
-    padding: 35px 40px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-
-    box-shadow:
-        0 10px 30px rgba(15, 23, 42, 0.15);
-}
-
-.hero-title {
-    color: white;
-    font-size: 42px;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
-
-.hero-subtitle {
-    color: #dbeafe;
-    font-size: 18px;
-    margin-top: 0;
-}
-
-/* -----------------------------------------------------------
-   Section Headers
------------------------------------------------------------ */
-
-.section-title {
-    font-size: 25px;
-    font-weight: 750;
-    color: #0f172a;
-    margin-top: 25px;
-    margin-bottom: 15px;
-}
-
-/* -----------------------------------------------------------
-   Metric Cards
------------------------------------------------------------ */
-
-.metric-card {
-    background: white;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    min-height: 125px;
-
-    box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.06);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.metric-card:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.10);
-}
-
-.metric-label {
-    color: #64748b;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.metric-value {
-    color: #0f172a;
-    font-size: 30px;
-    font-weight: 800;
-    margin-top: 8px;
-}
-
-/* -----------------------------------------------------------
-   Candidate Cards
------------------------------------------------------------ */
-
-.candidate-card {
-    background: white;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    padding: 22px;
-
-    margin-bottom: 15px;
-
-    box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.05);
-}
-
-.candidate-name {
-    color: #0f172a;
-    font-size: 19px;
-    font-weight: 750;
-}
-
-.candidate-score {
-    color: #2563eb;
-    font-size: 28px;
-    font-weight: 800;
-}
-
-/* -----------------------------------------------------------
-   Status Badges
------------------------------------------------------------ */
-
-.badge-success {
-    display: inline-block;
-
-    background: #dcfce7;
-    color: #166534;
-
-    padding: 5px 11px;
-
-    border-radius: 999px;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.badge-warning {
-    display: inline-block;
-
-    background: #fef3c7;
-    color: #92400e;
-
-    padding: 5px 11px;
-
-    border-radius: 999px;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.badge-danger {
-    display: inline-block;
-
-    background: #fee2e2;
-    color: #991b1b;
-
-    padding: 5px 11px;
-
-    border-radius: 999px;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-/* -----------------------------------------------------------
-   Text Areas
------------------------------------------------------------ */
-
-textarea {
-    border-radius: 12px !important;
-    border: 1px solid #cbd5e1 !important;
-}
-
-/* -----------------------------------------------------------
-   Buttons
------------------------------------------------------------ */
-
-.stButton > button {
-    border-radius: 10px;
-
-    border: none;
-
-    font-weight: 700;
-
-    padding: 10px 20px;
-
-    transition: all 0.2s ease;
-}
-
-.stButton > button:hover {
-    transform: translateY(-1px);
-}
-
-/* -----------------------------------------------------------
-   Dataframes
------------------------------------------------------------ */
-
-[data-testid="stDataFrame"] {
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-/* -----------------------------------------------------------
-   Expanders
------------------------------------------------------------ */
+/* ============================================================
+   CURRENT JOB DESCRIPTION — READABLE TEXT
+   ============================================================ */
 
 [data-testid="stExpander"] {
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    background: #ffffff !important;
+    border: 1px solid #d0d0d0 !important;
+    border-radius: 12px !important;
 }
 
-/* -----------------------------------------------------------
-   Sidebar
------------------------------------------------------------ */
-
-[data-testid="stSidebar"] {
-    background: #0f172a;
+/* Expander title */
+[data-testid="stExpander"] summary {
+    color: #000000 !important;
+    font-weight: 600 !important;
 }
 
-[data-testid="stSidebar"] * {
-    color: #e2e8f0;
+/* ALL text inside expanded Job Description */
+[data-testid="stExpander"] p,
+[data-testid="stExpander"] li,
+[data-testid="stExpander"] span,
+[data-testid="stExpander"] div,
+[data-testid="stExpander"] label {
+    color: #000000 !important;
 }
 
-/* -----------------------------------------------------------
-   Divider
------------------------------------------------------------ */
-
-hr {
-    border-color: #e2e8f0;
+/* Markdown content inside expander */
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"] li,
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"] span {
+    color: #000000 !important;
 }
 
-/* -----------------------------------------------------------
-   Footer
------------------------------------------------------------ */
-
-.footer {
-    text-align: center;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    margin-top: 50px;
-
-    padding-top: 20px;
-
-    border-top: 1px solid #e2e8f0;
+/* Headings */
+[data-testid="stExpander"] h1,
+[data-testid="stExpander"] h2,
+[data-testid="stExpander"] h3,
+[data-testid="stExpander"] h4,
+[data-testid="stExpander"] strong {
+    color: #000000 !important;
 }
 
 </style>
@@ -308,11 +86,34 @@ from resume_extractor import extract_candidate_data
 from resume_parser import extract_resume_text
 
 
+
+
+
 st.set_page_config(
     page_title="Smart Resume Screener",
     page_icon="📄",
     layout="wide",
 )
+
+st.markdown("""
+<style>
+
+/* Make expanded Current Job Description clearly readable */
+[data-testid="stExpander"] {
+    background: rgba(20, 25, 35, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-radius: 12px !important;
+}
+
+/* Expander title */
+[data-testid="stExpander"] summary {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 
 
 initialize_database()
@@ -920,7 +721,7 @@ else:
 
     st.dataframe(
         ranking_table,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -1012,7 +813,7 @@ if ranked_candidates:
 
         st.dataframe(
             skill_gap_data,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
@@ -1095,7 +896,7 @@ if len(ranked_candidates) >= 2:
 
         st.dataframe(
             comparison_table,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
