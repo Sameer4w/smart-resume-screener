@@ -384,6 +384,170 @@ else:
         hide_index=True,
     )
 
+    # Export ranked candidates
+    import pandas as pd
+
+    export_data = []
+
+    for candidate in ranked_candidates:
+        export_data.append(
+            {
+                "Rank": ranked_candidates.index(candidate) + 1,
+                "Candidate": candidate["name"],
+                "Email": candidate["email"] or "Not available",
+                "Score": candidate["match_score"],
+                "Technical Skills Score": candidate.get(
+                    "technical_skills_score", 0
+                ),
+                "Experience Score": candidate.get(
+                    "experience_score", 0
+                ),
+                "Education Score": candidate.get(
+                    "education_score", 0
+                ),
+                "Relevance Score": candidate.get(
+                    "relevance_score", 0
+                ),
+                "Matching Skills": ", ".join(
+                    candidate["matching_skills"]
+                ),
+                "Missing Skills": ", ".join(
+                    candidate["missing_skills"]
+                ),
+                "Status": (
+                    "Shortlisted"
+                    if candidate["match_score"]
+                    >= SHORTLIST_THRESHOLD
+                    else "Not Shortlisted"
+                ),
+            }
+        )
+
+    export_df = pd.DataFrame(export_data)
+
+    csv_data = export_df.to_csv(index=False)
+
+    st.download_button(
+        label="📥 Download Ranked Candidates CSV",
+        data=csv_data,
+        file_name="ranked_candidates.csv",
+        mime="text/csv",
+    )
+
+
+    st.divider()
+
+    st.markdown("### 🔍 Candidate Comparison")
+
+    if len(ranked_candidates) >= 2:
+
+        candidate_names = [
+            candidate["name"]
+            for candidate in ranked_candidates
+        ]
+
+        selected_candidates = st.multiselect(
+            "Select candidates to compare",
+            candidate_names,
+            default=candidate_names[:2],
+        )
+
+        if len(selected_candidates) >= 2:
+
+            comparison_candidates = [
+                candidate
+                for candidate in ranked_candidates
+                if candidate["name"] in selected_candidates
+            ]
+
+            comparison_table = []
+
+            for candidate in comparison_candidates:
+
+                comparison_table.append(
+                    {
+                        "Candidate": candidate["name"],
+                        "Overall Score": (
+                            f"{candidate["match_score"]}/10"
+                        ),
+                        "Technical Skills": (
+                            f"{candidate.get('technical_skills_score', 0):.2f}/6"
+                        ),
+                        "Experience": (
+                            f"{candidate.get('experience_score', 0):.2f}/2"
+                        ),
+                        "Education": (
+                            f"{candidate.get('education_score', 0):.2f}/1"
+                        ),
+                        "Relevance": (
+                            f"{candidate.get('relevance_score', 0):.2f}/1"
+                        ),
+                        "Matching Skills": (
+                            ", ".join(candidate["matching_skills"])
+                            or "None"
+                        ),
+                        "Missing Skills": (
+                            ", ".join(candidate["missing_skills"])
+                            or "None"
+                        ),
+                        "Status": (
+                            "Shortlisted"
+                            if candidate["match_score"]
+                            >= SHORTLIST_THRESHOLD
+                            else "Not Shortlisted"
+                        ),
+                    }
+                )
+
+            st.dataframe(
+                comparison_table,
+                use_container_width=True,
+                hide_index=True,
+            )
+
+            # Visual Score Comparison
+            st.markdown("### 📊 Score Comparison")
+
+            chart_data = []
+
+            for candidate in comparison_candidates:
+                chart_data.append(
+                    {
+                        "Candidate": candidate["name"],
+                        "Technical Skills": candidate.get(
+                            "technical_skills_score", 0
+                        ),
+                        "Experience": candidate.get(
+                            "experience_score", 0
+                        ),
+                        "Education": candidate.get(
+                            "education_score", 0
+                        ),
+                        "Relevance": candidate.get(
+                            "relevance_score", 0
+                        ),
+                    }
+                )
+
+            import pandas as pd
+
+            chart_df = pd.DataFrame(chart_data)
+
+            st.bar_chart(
+                chart_df.set_index("Candidate"),
+                stack=False,
+            )
+
+        else:
+            st.info(
+                "Select at least two candidates to compare."
+            )
+
+    else:
+        st.info(
+            "At least two scored candidates are required for comparison."
+        )
+
     for rank, candidate in enumerate(ranked_candidates, start=1):
         score = candidate["match_score"]
 

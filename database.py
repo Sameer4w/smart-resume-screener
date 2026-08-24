@@ -36,6 +36,10 @@ def migrate_database(connection: sqlite3.Connection) -> None:
         "education_match": "TEXT",
         "justification": "TEXT",
         "job_description": "TEXT",
+        "technical_skills_score": "REAL",
+        "experience_score": "REAL",
+        "education_score": "REAL",
+        "relevance_score": "REAL",
     }
 
     for column_name, column_type in new_columns.items():
@@ -69,6 +73,10 @@ def initialize_database() -> None:
                 education_match TEXT,
                 justification TEXT,
                 job_description TEXT,
+                technical_skills_score REAL,
+                experience_score REAL,
+                education_score REAL,
+                relevance_score REAL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
@@ -230,6 +238,8 @@ def save_match_result(
     connection = get_connection()
 
     try:
+        breakdown = match_result.get("score_breakdown", {})
+
         connection.execute(
             """
             UPDATE resumes
@@ -241,7 +251,11 @@ def save_match_result(
                 experience_match = ?,
                 education_match = ?,
                 justification = ?,
-                job_description = ?
+                job_description = ?,
+                technical_skills_score = ?,
+                experience_score = ?,
+                education_score = ?,
+                relevance_score = ?
             WHERE id = ?
             """,
             (
@@ -253,6 +267,10 @@ def save_match_result(
                 match_result.get("education_match", ""),
                 match_result.get("justification", ""),
                 job_description,
+                breakdown.get("technical_skills", 0),
+                breakdown.get("experience", 0),
+                breakdown.get("education", 0),
+                breakdown.get("relevance", 0),
                 resume_id,
             ),
         )
@@ -261,6 +279,7 @@ def save_match_result(
 
     finally:
         connection.close()
+
 
 def get_ranked_resumes() -> List[Dict]:
     """Return resumes ranked by match score."""
