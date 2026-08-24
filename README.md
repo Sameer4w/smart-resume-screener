@@ -258,3 +258,10 @@ A 2–3 minute demonstration video can be used to demonstrate the complete appli
 **Smart Resume Screener**
 
 AI-powered recruitment analytics and candidate decision-support system.
+
+## 🎥 Demo Video
+
+A 2–3 minute demonstration of the Smart Resume Screener application:
+
+[Watch the Smart Resume Screener Demo](https://drive.google.com/file/d/1MtlhCd1J41Ilc33hPwj1MatlSSrJW6-v/view?usp=sharing)
+
