@@ -3,6 +3,297 @@ import tempfile
 
 import streamlit as st
 
+
+# ============================================================
+# PROFESSIONAL SMART RESUME SCREENER UI
+# ============================================================
+
+st.markdown("""
+<style>
+
+/* -----------------------------------------------------------
+   Global
+----------------------------------------------------------- */
+
+.main {
+    background: #f7f9fc;
+}
+
+.block-container {
+    max-width: 1400px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* -----------------------------------------------------------
+   Main Header
+----------------------------------------------------------- */
+
+.hero {
+    background: linear-gradient(
+        135deg,
+        #0f172a 0%,
+        #1e3a8a 55%,
+        #2563eb 100%
+    );
+
+    padding: 35px 40px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.15);
+}
+
+.hero-title {
+    color: white;
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.hero-subtitle {
+    color: #dbeafe;
+    font-size: 18px;
+    margin-top: 0;
+}
+
+/* -----------------------------------------------------------
+   Section Headers
+----------------------------------------------------------- */
+
+.section-title {
+    font-size: 25px;
+    font-weight: 750;
+    color: #0f172a;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* -----------------------------------------------------------
+   Metric Cards
+----------------------------------------------------------- */
+
+.metric-card {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    min-height: 125px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.06);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.10);
+}
+
+.metric-label {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.metric-value {
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+/* -----------------------------------------------------------
+   Candidate Cards
+----------------------------------------------------------- */
+
+.candidate-card {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    margin-bottom: 15px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.05);
+}
+
+.candidate-name {
+    color: #0f172a;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.candidate-score {
+    color: #2563eb;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+/* -----------------------------------------------------------
+   Status Badges
+----------------------------------------------------------- */
+
+.badge-success {
+    display: inline-block;
+
+    background: #dcfce7;
+    color: #166534;
+
+    padding: 5px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-warning {
+    display: inline-block;
+
+    background: #fef3c7;
+    color: #92400e;
+
+    padding: 5px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-danger {
+    display: inline-block;
+
+    background: #fee2e2;
+    color: #991b1b;
+
+    padding: 5px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* -----------------------------------------------------------
+   Text Areas
+----------------------------------------------------------- */
+
+textarea {
+    border-radius: 12px !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+/* -----------------------------------------------------------
+   Buttons
+----------------------------------------------------------- */
+
+.stButton > button {
+    border-radius: 10px;
+
+    border: none;
+
+    font-weight: 700;
+
+    padding: 10px 20px;
+
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------
+   Dataframes
+----------------------------------------------------------- */
+
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* -----------------------------------------------------------
+   Expanders
+----------------------------------------------------------- */
+
+[data-testid="stExpander"] {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+/* -----------------------------------------------------------
+   Sidebar
+----------------------------------------------------------- */
+
+[data-testid="stSidebar"] {
+    background: #0f172a;
+}
+
+[data-testid="stSidebar"] * {
+    color: #e2e8f0;
+}
+
+/* -----------------------------------------------------------
+   Divider
+----------------------------------------------------------- */
+
+hr {
+    border-color: #e2e8f0;
+}
+
+/* -----------------------------------------------------------
+   Footer
+----------------------------------------------------------- */
+
+.footer {
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    margin-top: 50px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ============================================================
+# HERO HEADER
+# ============================================================
+
+st.markdown("""
+<div class="hero">
+<div class="hero-title">📄 Smart Resume Screener</div>
+<div class="hero-subtitle">
+AI-powered resume analysis, candidate ranking,
+skill-gap detection and recruiter decision support.
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+
+
 from database import (
     find_existing_resume,
     initialize_database,
@@ -12,7 +303,7 @@ from database import (
     get_ranked_resumes,
     save_match_result,
 )
-from llm_matcher import match_resume_to_job
+from hybrid_matcher import hybrid_match_resume
 from resume_extractor import extract_candidate_data
 from resume_parser import extract_resume_text
 
@@ -27,7 +318,7 @@ st.set_page_config(
 initialize_database()
 
 
-st.title("📄 Smart Resume Screener")
+
 
 st.write(
     "Upload resumes and compare candidates against a job description "
@@ -73,14 +364,32 @@ with st.expander("View Stored Candidates"):
 
 st.subheader("Job Description")
 
-job_description = st.text_area(
-    "Enter the job description",
-    height=250,
-    placeholder="Paste the job description here...",
-)
+with st.form("job_description_form"):
 
-if job_description.strip():
-    with st.expander("📋 Current Job Description", expanded=False):
+    job_description_input = st.text_area(
+        "Enter the job description",
+        height=250,
+        placeholder="Paste the job description here...",
+    )
+
+    apply_job_description = st.form_submit_button(
+        "✅ Apply Job Description",
+        type="primary",
+    )
+
+if "job_description" not in st.session_state:
+    st.session_state.job_description = ""
+
+if apply_job_description:
+    st.session_state.job_description = job_description_input.strip()
+
+job_description = st.session_state.job_description
+
+if job_description:
+    with st.expander(
+        "📋 Current Job Description",
+        expanded=False,
+    ):
         st.write(job_description)
 
 st.subheader("Resume Upload")
@@ -93,182 +402,204 @@ uploaded_files = st.file_uploader(
 
 
 if uploaded_files:
+
     st.success(f"{len(uploaded_files)} resume(s) uploaded.")
 
+    # ---------------------------------------------------------
+    # Process uploaded resumes
+    # ---------------------------------------------------------
 
-if job_description.strip() and uploaded_files:
+    if not job_description.strip():
 
-    st.divider()
+        st.warning(
+            "⚠️ Please apply a job description before processing resumes."
+        )
 
-    st.subheader("Resume Analysis")
+    else:
 
-    if st.button("Process Resumes", type="primary"):
-
-        processed_count = 0
+        import tempfile
+        from pathlib import Path
 
         for uploaded_file in uploaded_files:
 
-            suffix = os.path.splitext(uploaded_file.name)[1].lower()
-
-            with tempfile.NamedTemporaryFile(
-                delete=False,
-                suffix=suffix,
-            ) as temporary_file:
-
-                temporary_file.write(uploaded_file.getvalue())
-                temporary_path = temporary_file.name
-
             try:
-                resume_text = extract_resume_text(temporary_path)
+
+                # -------------------------------------------------
+                # 1. Save uploaded file temporarily
+                # -------------------------------------------------
+
+                suffix = Path(uploaded_file.name).suffix
+
+                with tempfile.NamedTemporaryFile(
+                    delete=False,
+                    suffix=suffix,
+                ) as temp_file:
+
+                    temp_file.write(uploaded_file.getbuffer())
+                    temp_path = temp_file.name
+
+                # -------------------------------------------------
+                # 2. Extract resume text
+                # -------------------------------------------------
+
+                resume_text = extract_resume_text(temp_path)
 
                 if not resume_text.strip():
-                    st.warning(
-                        f"Could not extract text from {uploaded_file.name}."
+
+                    st.error(
+                        f"❌ Could not extract text from "
+                        f"{uploaded_file.name}"
                     )
+
                     continue
 
-                candidate = extract_candidate_data(resume_text)
-
-                candidate["name"] = os.path.splitext(
-                    uploaded_file.name
-                )[0]
+                # -------------------------------------------------
+                # 3. Check duplicate resume
+                # -------------------------------------------------
 
                 existing_resume = find_existing_resume(resume_text)
 
                 if existing_resume:
-                    resume_id = existing_resume["id"]
 
                     st.info(
-                        f"{uploaded_file.name} already exists in the database. "
-                        f"Using existing candidate ID: {resume_id}."
-                    )
-                else:
-                    resume_id = save_resume(
-                        candidate,
-                        resume_text,
+                        f"ℹ️ {uploaded_file.name} is already "
+                        f"stored in the database."
                     )
 
-                processed_count += 1
+                    continue
 
-                st.success(
-                    f"{uploaded_file.name} processed successfully "
-                    f"(ID: {resume_id})."
+                # -------------------------------------------------
+                # 4. Extract candidate information
+                # -------------------------------------------------
+
+                candidate = extract_candidate_data(resume_text)
+
+                # Candidate name is not currently extracted
+                # from the resume, so use the filename.
+                candidate["name"] = Path(
+                    uploaded_file.name
+                ).stem
+
+                # -------------------------------------------------
+                # 5. Save candidate
+                # -------------------------------------------------
+
+                resume_id = save_resume(
+                    candidate=candidate,
+                    resume_text=resume_text,
                 )
 
-                with st.expander(
-                    f"Extracted data — {uploaded_file.name}"
-                ):
-                    st.write("**Email:**", candidate["email"])
-                    st.write("**Phone:**", candidate["phone"])
-                    st.write("**Skills:**", candidate["skills"])
-                    st.write("**Education:**", candidate["education"])
-                    st.write("**Experience:**", candidate["experience"])
+                # -------------------------------------------------
+                # 6. Run Hybrid Matcher
+                # -------------------------------------------------
 
-                st.markdown("### 🤖 Job Match")
+                match_result = hybrid_match_resume(
+                    resume_text=resume_text,
+                    job_description=job_description,
+                    resume_skills=candidate.get("skills", []),
+                )
 
-                try:
-                    match_result = match_resume_to_job(
-                        resume_text=resume_text,
-                        job_description=job_description,
-                    )
+                # -------------------------------------------------
+                # 7. Save match result
+                # -------------------------------------------------
 
-                    save_match_result(
-                        resume_id=resume_id,
-                        job_description=job_description,
-                        match_result=match_result,
-                    )
+                save_match_result(
+                    resume_id=resume_id,
+                    job_description=job_description,
+                    match_result=match_result,
+                )
 
-                    st.metric(
-                        "Match Score",
-                        f"{match_result['match_score']}/10",
-                    )
+                # -------------------------------------------------
+                # 8. Show result
+                # -------------------------------------------------
 
-                    # Score Breakdown
-                    breakdown = match_result.get("score_breakdown", {})
+                score = match_result.get("match_score", 0)
 
-                    if breakdown:
-                        st.markdown("### 📊 Score Breakdown")
+                st.success(
+                    f"✅ {uploaded_file.name} processed successfully!"
+                )
 
-                        col1, col2 = st.columns(2)
+                st.write(
+                    f"📊 Match Score: **{score}/10**"
+                )
 
-                        with col1:
-                            st.metric(
-                                "Technical Skills",
-                                f"{breakdown.get('technical_skills', 0):.2f} / 6.00",
-                            )
+                st.write(
+                    f"🟢 Matching Skills: "
+                    f"{match_result.get('matching_skills', [])}"
+                )
 
-                            st.metric(
-                                "Experience / Projects",
-                                f"{breakdown.get('experience', 0):.2f} / 2.00",
-                            )
+                st.write(
+                    f"🔴 Missing Skills: "
+                    f"{match_result.get('missing_skills', [])}"
+                )
 
-                        with col2:
-                            st.metric(
-                                "Education",
-                                f"{breakdown.get('education', 0):.2f} / 1.00",
-                            )
+            except Exception as exc:
 
-                            st.metric(
-                                "Overall Relevance",
-                                f"{breakdown.get('relevance', 0):.2f} / 1.00",
-                            )
+                st.error(
+                    f"❌ Could not process "
+                    f"{uploaded_file.name}: {exc}"
+                )
 
-                    st.write(
-                        "**Summary:**",
-                        match_result["summary"],
-                    )
 
-                    st.write(
-                        "**Matching Skills:**",
-                        ", ".join(match_result["matching_skills"])
-                        or "None identified",
-                    )
+# ---------------------------------------------------------
+# Recalculate existing candidates
+# ---------------------------------------------------------
 
-                    st.write(
-                        "**Missing Skills:**",
-                        ", ".join(match_result["missing_skills"])
-                        or "None identified",
-                    )
+st.markdown("### 🔄 Recalculate Existing Candidates")
 
-                    st.write(
-                        "**Experience Match:**",
-                        match_result["experience_match"],
-                    )
+st.write(
+    "Use the current job description to re-evaluate "
+    "all candidates already stored in the database."
+)
 
-                    st.write(
-                        "**Education Match:**",
-                        match_result["education_match"],
-                    )
+recalculate_clicked = st.button(
+    "🔄 Recalculate All Candidates",
+    type="secondary",
+    disabled=not job_description.strip(),
+)
 
-                    st.write(
-                        "**Justification:**",
-                        match_result["justification"],
-                    )
+if recalculate_clicked:
 
-                except Exception as match_error:
-                    st.warning(
-                        "AI matching is currently unavailable."
-                    )
+    stored_candidates = get_all_resumes()
 
-                    st.caption(
-                        f"Matching status: {match_error}"
-                    )
+    if not stored_candidates:
+        st.warning(
+            "No stored candidates are available."
+        )
+
+    else:
+        recalculated_count = 0
+
+        for candidate in stored_candidates:
+
+            try:
+                match_result = hybrid_match_resume(
+                    resume_text=candidate["resume_text"],
+                    job_description=job_description,
+                    resume_skills=candidate["skills"],
+                )
+
+                save_match_result(
+                    resume_id=candidate["id"],
+                    job_description=job_description,
+                    match_result=match_result,
+                )
+
+                recalculated_count += 1
 
             except Exception as exc:
                 st.error(
-                    f"Error processing {uploaded_file.name}: {exc}"
+                    f"Could not recalculate "
+                    f"{candidate['name']}: {exc}"
                 )
 
-            finally:
-                try:
-                    os.remove(temporary_path)
-                except OSError:
-                    pass
-
-        if processed_count:
-            st.info(
-                f"{processed_count} resume(s) processed and stored."
+        if recalculated_count:
+            st.success(
+                f"✅ {recalculated_count} candidate(s) "
+                "recalculated successfully."
             )
+
+            st.rerun()
 
 
 st.subheader("🏆 Candidate Ranking")
@@ -300,6 +631,82 @@ else:
         for candidate in ranked_candidates
         if candidate["match_score"] >= SHORTLIST_THRESHOLD
     ]
+
+    # ---------------------------------------------------------
+    # Recruiter Analytics Dashboard
+    # ---------------------------------------------------------
+
+    st.markdown("### 📊 Recruiter Analytics Dashboard")
+
+    total_candidates = len(ranked_candidates)
+
+    average_score = sum(
+        candidate["match_score"]
+        for candidate in ranked_candidates
+    ) / total_candidates
+
+    highest_score = max(
+        candidate["match_score"]
+        for candidate in ranked_candidates
+    )
+
+    shortlisted_percentage = (
+        len(shortlisted_candidates)
+        / total_candidates
+        * 100
+    )
+
+    average_technical = sum(
+        candidate.get("technical_skills_score", 0) or 0
+        for candidate in ranked_candidates
+    ) / total_candidates
+
+    average_experience = sum(
+        candidate.get("experience_score", 0) or 0
+        for candidate in ranked_candidates
+    ) / total_candidates
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(
+            "👥 Total Candidates",
+            total_candidates,
+        )
+
+    with col2:
+        st.metric(
+            "📊 Average Score",
+            f"{average_score:.2f}/10",
+        )
+
+    with col3:
+        st.metric(
+            "🏆 Highest Score",
+            f"{highest_score:.1f}/10",
+        )
+
+    with col4:
+        st.metric(
+            "⭐ Shortlisted",
+            f"{shortlisted_percentage:.0f}%",
+        )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric(
+            "💻 Avg Technical Skills",
+            f"{average_technical:.2f}/6",
+        )
+
+    with col2:
+        st.metric(
+            "💼 Avg Experience",
+            f"{average_experience:.2f}/2",
+        )
+
+    st.divider()
 
     st.metric(
         "Shortlisted Candidates",
@@ -570,116 +977,171 @@ else:
 
     st.divider()
 
-    st.markdown("### 🔍 Candidate Comparison")
+    
+# ============================================================
+# Skill Gap Analytics
+# ============================================================
 
-    if len(ranked_candidates) >= 2:
+st.markdown("### 🧠 Skill Gap Analytics")
 
-        candidate_names = [
-            candidate["name"]
-            for candidate in ranked_candidates
-        ]
+if ranked_candidates:
 
-        selected_candidates = st.multiselect(
-            "Select candidates to compare",
-            candidate_names,
-            default=candidate_names[:2],
+    all_missing_skills = []
+
+    for candidate in ranked_candidates:
+        all_missing_skills.extend(
+            candidate.get("missing_skills", [])
         )
 
-        if len(selected_candidates) >= 2:
+    if all_missing_skills:
 
-            comparison_candidates = [
-                candidate
-                for candidate in ranked_candidates
-                if candidate["name"] in selected_candidates
-            ]
+        from collections import Counter
 
-            comparison_table = []
+        skill_counts = Counter(
+            skill.lower()
+            for skill in all_missing_skills
+        )
 
-            for candidate in comparison_candidates:
+        skill_gap_data = [
+            {
+                "Skill": skill,
+                "Candidates Missing": count,
+            }
+            for skill, count in skill_counts.most_common()
+        ]
 
-                comparison_table.append(
-                    {
-                        "Candidate": candidate["name"],
-                        "Overall Score": (
-                            f"{candidate["match_score"]}/10"
-                        ),
-                        "Technical Skills": (
-                            f"{candidate.get('technical_skills_score', 0):.2f}/6"
-                        ),
-                        "Experience": (
-                            f"{candidate.get('experience_score', 0):.2f}/2"
-                        ),
-                        "Education": (
-                            f"{candidate.get('education_score', 0):.2f}/1"
-                        ),
-                        "Relevance": (
-                            f"{candidate.get('relevance_score', 0):.2f}/1"
-                        ),
-                        "Matching Skills": (
-                            ", ".join(candidate["matching_skills"])
-                            or "None"
-                        ),
-                        "Missing Skills": (
-                            ", ".join(candidate["missing_skills"])
-                            or "None"
-                        ),
-                        "Status": (
-                            "Shortlisted"
-                            if candidate["match_score"]
-                            >= SHORTLIST_THRESHOLD
-                            else "Not Shortlisted"
-                        ),
-                    }
-                )
+        st.dataframe(
+            skill_gap_data,
+            use_container_width=True,
+            hide_index=True,
+        )
 
-            st.dataframe(
-                comparison_table,
-                use_container_width=True,
-                hide_index=True,
-            )
+        st.markdown("#### 🔴 Most Common Skill Gaps")
 
-            # Visual Score Comparison
-            st.markdown("### 📊 Score Comparison")
-
-            chart_data = []
-
-            for candidate in comparison_candidates:
-                chart_data.append(
-                    {
-                        "Candidate": candidate["name"],
-                        "Technical Skills": candidate.get(
-                            "technical_skills_score", 0
-                        ),
-                        "Experience": candidate.get(
-                            "experience_score", 0
-                        ),
-                        "Education": candidate.get(
-                            "education_score", 0
-                        ),
-                        "Relevance": candidate.get(
-                            "relevance_score", 0
-                        ),
-                    }
-                )
-
-            import pandas as pd
-
-            chart_df = pd.DataFrame(chart_data)
-
-            st.bar_chart(
-                chart_df.set_index("Candidate"),
-                stack=False,
-            )
-
-        else:
-            st.info(
-                "Select at least two candidates to compare."
+        for skill, count in skill_counts.most_common(5):
+            st.write(
+                f"**{skill}** — missing in "
+                f"{count} candidate(s)"
             )
 
     else:
-        st.info(
-            "At least two scored candidates are required for comparison."
+        st.success(
+            "No major skill gaps identified among the "
+            "evaluated candidates."
         )
+
+else:
+    st.info(
+        "Skill gap analytics will appear after "
+        "candidates are scored."
+    )
+
+
+st.markdown("### 🔍 Candidate Comparison")
+
+if len(ranked_candidates) >= 2:
+
+    candidate_names = [
+        candidate["name"]
+        for candidate in ranked_candidates
+    ]
+
+    selected_candidates = st.multiselect(
+        "Select candidates to compare",
+        candidate_names,
+        default=candidate_names[:2],
+    )
+
+    if len(selected_candidates) >= 2:
+
+        comparison_candidates = [
+            candidate
+            for candidate in ranked_candidates
+            if candidate["name"] in selected_candidates
+        ]
+
+        comparison_table = []
+
+        for candidate in comparison_candidates:
+            comparison_table.append(
+                {
+                    "Candidate": candidate["name"],
+                    "Score": f'{candidate["match_score"]}/10',
+                    "Technical Skills": (
+                        f'{candidate.get("technical_skills_score", 0):.2f}/6'
+                    ),
+                    "Experience": (
+                        f'{candidate.get("experience_score", 0):.2f}/2'
+                    ),
+                    "Education": (
+                        f'{candidate.get("education_score", 0):.2f}/1'
+                    ),
+                    "Relevance": (
+                        f'{candidate.get("relevance_score", 0):.2f}/1'
+                    ),
+                    "Matching Skills": (
+                        ", ".join(candidate["matching_skills"]) or "None"
+                    ),
+                    "Missing Skills": (
+                        ", ".join(candidate["missing_skills"]) or "None"
+                    ),
+                    "Status": (
+                        "Shortlisted"
+                        if candidate["match_score"] >= SHORTLIST_THRESHOLD
+                        else "Not Shortlisted"
+                    ),
+                }
+            )
+
+        st.dataframe(
+            comparison_table,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        # Visual Score Comparison
+
+        st.markdown("### 📊 Score Comparison")
+
+        chart_data = []
+
+        for candidate in comparison_candidates:
+            chart_data.append(
+                {
+                    "Candidate": candidate["name"],
+                    "Technical Skills": candidate.get(
+                        "technical_skills_score", 0
+                    ),
+                    "Experience": candidate.get(
+                        "experience_score", 0
+                    ),
+                    "Education": candidate.get(
+                        "education_score", 0
+                    ),
+                    "Relevance": candidate.get(
+                        "relevance_score", 0
+                    ),
+                }
+            )
+
+        import pandas as pd
+
+        chart_df = pd.DataFrame(chart_data)
+
+        st.bar_chart(
+            chart_df.set_index("Candidate"),
+            stack=False,
+        )
+
+    else:
+        st.info(
+            "Select at least two candidates to compare."
+        )
+
+else:
+    st.info(
+        "At least two scored candidates are required for comparison."
+    )
 
     for rank, candidate in enumerate(ranked_candidates, start=1):
         score = candidate["match_score"]
@@ -715,4 +1177,1025 @@ else:
             )
 
         st.divider()
+
+
+# ============================================================
+# 📄 Resume Quality / ATS Analysis
+# ============================================================
+
+st.divider()
+
+st.markdown("### 📄 Resume Quality / ATS Analysis")
+
+if ranked_candidates:
+
+    st.write(
+        "Analyze each candidate's ATS compatibility "
+        "based on job match and required skill coverage."
+    )
+
+    for candidate in ranked_candidates:
+
+        matching_count = len(
+            candidate.get("matching_skills", [])
+        )
+
+        missing_count = len(
+            candidate.get("missing_skills", [])
+        )
+
+        total_skills = matching_count + missing_count
+
+        if total_skills > 0:
+            skill_coverage = (
+                matching_count / total_skills
+            ) * 100
+        else:
+            skill_coverage = 0
+
+        match_score = candidate.get(
+            "match_score", 0
+        )
+
+        ats_score = (
+            (match_score / 10) * 70
+            + (skill_coverage / 100) * 30
+        )
+
+        ats_score = min(
+            100,
+            round(ats_score, 2)
+        )
+
+        st.markdown(
+            f"#### 👤 {candidate['name']}"
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "ATS Score",
+            f"{ats_score}/100"
+        )
+
+        col2.metric(
+            "Skill Coverage",
+            f"{skill_coverage:.1f}%"
+        )
+
+        col3.metric(
+            "Job Match",
+            f"{match_score}/10"
+        )
+
+        if ats_score >= 80:
+
+            st.success(
+                "🟢 Strong ATS compatibility"
+            )
+
+        elif ats_score >= 60:
+
+            st.warning(
+                "🟡 Moderate ATS compatibility"
+            )
+
+        else:
+
+            st.error(
+                "🔴 Low ATS compatibility"
+            )
+
+        if candidate.get("missing_skills"):
+
+            st.write(
+                "**Recommended Improvements:**"
+            )
+
+            for skill in candidate["missing_skills"]:
+
+                st.write(
+                    f"- Strengthen **{skill}** "
+                    "if you have this skill."
+                )
+
+        else:
+
+            st.write(
+                "✅ No major skill gaps identified."
+            )
+
+
+# ============================================================
+# 📝 Resume Improvement Recommendations
+# ============================================================
+
+st.divider()
+
+st.markdown("### 📝 Resume Improvement Recommendations")
+
+if ranked_candidates:
+
+    st.write(
+        "Get actionable recommendations for improving each "
+        "candidate's resume based on the current job description."
+    )
+
+    for candidate in ranked_candidates:
+
+        st.markdown(
+            f"#### 👤 {candidate['name']}"
+        )
+
+        matching_skills = candidate.get(
+            "matching_skills", []
+        )
+
+        missing_skills = candidate.get(
+            "missing_skills", []
+        )
+
+        recommendations = []
+
+        # Skill recommendations
+        if missing_skills:
+
+            for skill in missing_skills:
+                recommendations.append(
+                    f"Strengthen or add **{skill}** "
+                    "if you have relevant experience."
+                )
+
+        # Experience recommendation
+        experience_score = candidate.get(
+            "experience_score", 0
+        )
+
+        if experience_score < 2:
+
+            recommendations.append(
+                "Add more relevant backend development "
+                "experience, internships, or academic projects."
+            )
+
+        # Technical skills recommendation
+        technical_score = candidate.get(
+            "technical_skills_score", 0
+        )
+
+        if technical_score < 4:
+
+            recommendations.append(
+                "Improve the Technical Skills section by "
+                "highlighting technologies directly related "
+                "to the job description."
+            )
+
+        # Project recommendation
+        if candidate.get("relevance_score", 0) < 0.5:
+
+            recommendations.append(
+                "Improve project descriptions by clearly "
+                "mentioning your role, technologies used, "
+                "and contribution."
+            )
+
+        # General ATS recommendation
+        recommendations.append(
+            "Use clear section headings and include relevant "
+            "job-description keywords naturally throughout "
+            "the resume."
+        )
+
+        if recommendations:
+
+            for number, recommendation in enumerate(
+                recommendations,
+                start=1
+            ):
+
+                st.write(
+                    f"**{number}.** {recommendation}"
+                )
+
+        else:
+
+            st.success(
+                "✅ No major improvements identified."
+            )
+
+        st.caption(
+            f"Current Match Score: "
+            f"{candidate.get('match_score', 0)}/10"
+        )
+
+else:
+
+    st.info(
+        "Resume improvement recommendations will appear "
+        "after candidates are scored."
+    )
+
+
+
+# ============================================================
+# RESUME IMPROVEMENT RECOMMENDATIONS
+# ============================================================
+
+st.markdown("### 📌 Resume Improvement Recommendations")
+
+if ranked_candidates:
+
+    recommendation_candidate = ranked_candidates[0]
+
+    st.write(
+        f"**Candidate:** {recommendation_candidate['name']}"
+    )
+
+    missing_skills = recommendation_candidate.get(
+        "missing_skills", []
+    )
+
+    matching_skills = recommendation_candidate.get(
+        "matching_skills", []
+    )
+
+    st.write(
+        f"**Current Match Score:** "
+        f"{recommendation_candidate['match_score']}/10"
+    )
+
+    if missing_skills:
+
+        st.info(
+            "The recommendations below focus on improving "
+            "the candidate's alignment with the current job description."
+        )
+
+        st.markdown("#### 🛠️ Recommended Improvements")
+
+        # ----------------------------------------------------
+        # Skills Section
+        # ----------------------------------------------------
+
+        st.markdown("**1. Skills Section**")
+
+        st.write(
+            "Review the job description and add missing skills "
+            "that the candidate genuinely possesses or has relevant "
+            "experience with."
+        )
+
+        st.write(
+            "**Missing skills:** "
+            + ", ".join(missing_skills)
+        )
+
+        # ----------------------------------------------------
+        # Technical Skills
+        # ----------------------------------------------------
+
+        st.markdown("**2. Technical Skills**")
+
+        st.write(
+            "Highlight relevant programming languages, frameworks, "
+            "databases, APIs, development tools, and technologies "
+            "that match the target role."
+        )
+
+        # ----------------------------------------------------
+        # Experience
+        # ----------------------------------------------------
+
+        st.markdown("**3. Experience**")
+
+        st.write(
+            "Add measurable achievements and clearly describe "
+            "backend development responsibilities, technologies "
+            "used, and the candidate's contribution."
+        )
+
+        # ----------------------------------------------------
+        # Projects
+        # ----------------------------------------------------
+
+        st.markdown("**4. Projects**")
+
+        st.write(
+            "Strengthen relevant projects by mentioning the "
+            "technologies used, backend functionality implemented, "
+            "APIs developed, databases used, and the candidate's "
+            "specific contribution."
+        )
+
+        # ----------------------------------------------------
+        # Job Alignment
+        # ----------------------------------------------------
+
+        st.markdown("**5. Job Alignment**")
+
+        st.write(
+            "Prioritize skills and experience that directly appear "
+            "in the job description. Use clear and relevant "
+            "terminology so recruiters can quickly identify "
+            "the candidate's suitability."
+        )
+
+    else:
+
+        st.success(
+            "No major skill gaps were identified. "
+            "The resume already has strong alignment with "
+            "the current job description."
+        )
+
+        st.markdown("#### ⭐ Maintain Strong Alignment")
+
+        st.write(
+            "Continue emphasizing the candidate's strongest "
+            "matching skills and relevant experience."
+        )
+
+        if matching_skills:
+            st.write(
+                "**Strong matching skills:** "
+                + ", ".join(matching_skills)
+            )
+
+else:
+
+    st.info(
+        "Resume improvement recommendations will appear "
+        "after candidates are scored."
+    )
+
+
+
+
+
+# ============================================================
+# ADVANCED NLP / SEMANTIC SKILL MATCHING
+# ============================================================
+
+
+
+# ============================================================
+# EXPLAINABLE AI
+# ============================================================
+
+def generate_candidate_explanation(candidate):
+    """
+    Generates a transparent explanation of the candidate score.
+    Uses the existing scoring components rather than replacing
+    the scoring system.
+    """
+
+    score = candidate.get("match_score", 0)
+
+    technical = candidate.get(
+        "technical_skills_score", 0
+    )
+
+    experience = candidate.get(
+        "experience_score", 0
+    )
+
+    education = candidate.get(
+        "education_score", 0
+    )
+
+    relevance = candidate.get(
+        "relevance_score", 0
+    )
+
+    matching_skills = candidate.get(
+        "matching_skills", []
+    )
+
+    missing_skills = candidate.get(
+        "missing_skills", []
+    )
+
+    strengths = []
+    weaknesses = []
+
+    # --------------------------------------------------------
+    # Technical Skills
+    # --------------------------------------------------------
+
+    if technical >= 5:
+        strengths.append(
+            "Strong technical skill alignment"
+        )
+    elif technical >= 3:
+        strengths.append(
+            "Moderate technical skill alignment"
+        )
+    else:
+        weaknesses.append(
+            "Limited technical skill alignment"
+        )
+
+    # --------------------------------------------------------
+    # Experience
+    # --------------------------------------------------------
+
+    if experience >= 1.5:
+        strengths.append(
+            "Relevant experience"
+        )
+    elif experience >= 1:
+        strengths.append(
+            "Some relevant experience"
+        )
+    else:
+        weaknesses.append(
+            "Limited relevant experience"
+        )
+
+    # --------------------------------------------------------
+    # Education
+    # --------------------------------------------------------
+
+    if education >= 0.75:
+        strengths.append(
+            "Education matches the expected qualification"
+        )
+    else:
+        weaknesses.append(
+            "Education alignment could be stronger"
+        )
+
+    # --------------------------------------------------------
+    # Relevance
+    # --------------------------------------------------------
+
+    if relevance >= 0.7:
+        strengths.append(
+            "High overall job-description relevance"
+        )
+    elif relevance >= 0.4:
+        strengths.append(
+            "Reasonable job-description relevance"
+        )
+    else:
+        weaknesses.append(
+            "Low overall job-description relevance"
+        )
+
+    # --------------------------------------------------------
+    # Missing Skills
+    # --------------------------------------------------------
+
+    if missing_skills:
+        weaknesses.append(
+            "Missing required skills: "
+            + ", ".join(missing_skills)
+        )
+
+    # --------------------------------------------------------
+    # Overall explanation
+    # --------------------------------------------------------
+
+    if score >= 8:
+        decision = "Strong candidate alignment"
+    elif score >= 7:
+        decision = "Good candidate alignment"
+    elif score >= 5:
+        decision = "Partial candidate alignment"
+    else:
+        decision = "Low candidate alignment"
+
+    return {
+        "decision": decision,
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "matching_skills": matching_skills,
+        "missing_skills": missing_skills,
+        "score_components": {
+            "Technical Skills": technical,
+            "Experience": experience,
+            "Education": education,
+            "Relevance": relevance,
+        },
+    }
+
+
+
+def semantic_skill_match(resume_text, job_description):
+    """
+    Detect related technical terms using lightweight
+    semantic keyword groups.
+
+    This supplements exact skill matching and does not
+    replace the existing scoring system.
+    """
+
+    text = (
+        (resume_text or "") + " " +
+        (job_description or "")
+    ).lower()
+
+    semantic_groups = {
+        "rest api": [
+            "rest api",
+            "restful api",
+            "restful services",
+            "rest services",
+            "web api",
+            "http api",
+            "api development",
+        ],
+
+        "sql": [
+            "sql",
+            "mysql",
+            "postgresql",
+            "postgres",
+            "database queries",
+            "relational database",
+            "relational databases",
+        ],
+
+        "git": [
+            "git",
+            "github",
+            "gitlab",
+            "version control",
+            "source control",
+        ],
+
+        "backend development": [
+            "backend",
+            "back-end",
+            "server-side",
+            "server side",
+            "backend development",
+            "backend applications",
+            "web services",
+        ],
+
+        "python": [
+            "python",
+            "python programming",
+            "python development",
+        ],
+
+        "java": [
+            "java",
+            "java programming",
+            "java development",
+        ],
+
+        "spring boot": [
+            "spring boot",
+            "springboot",
+            "spring framework",
+        ],
+
+        "fastapi": [
+            "fastapi",
+            "fast api",
+            "python web framework",
+        ],
+
+        "docker": [
+            "docker",
+            "containerization",
+            "containers",
+            "docker containers",
+        ],
+
+        "postgresql": [
+            "postgresql",
+            "postgres",
+            "postgres database",
+        ],
+    }
+
+    detected = []
+
+    for canonical_skill, variants in semantic_groups.items():
+
+        found = False
+
+        for variant in variants:
+            if variant in text:
+                found = True
+                break
+
+        if found:
+            detected.append(canonical_skill)
+
+    return detected
+
+
+def calculate_semantic_bonus(
+    resume_text,
+    job_description,
+    existing_matching_skills=None
+):
+    """
+    Calculates a small semantic alignment bonus.
+
+    Exact matching remains the primary scoring mechanism.
+    Semantic matching provides additional evidence when
+    equivalent terminology is used.
+    """
+
+    existing_matching_skills = (
+        existing_matching_skills or []
+    )
+
+    semantic_matches = semantic_skill_match(
+        resume_text,
+        job_description
+    )
+
+    new_matches = [
+        skill
+        for skill in semantic_matches
+        if skill.lower()
+        not in [
+            str(existing).lower()
+            for existing in existing_matching_skills
+        ]
+    ]
+
+    bonus = min(
+        len(new_matches) * 0.15,
+        0.75
+    )
+
+    return round(bonus, 2), new_matches
+
+
+
+# ============================================================
+# EXPLAINABLE AI RESULTS
+# ============================================================
+
+st.markdown("### 🧠 Explainable AI Analysis")
+
+if ranked_candidates:
+
+    explain_candidate = ranked_candidates[0]
+
+    explanation = generate_candidate_explanation(
+        explain_candidate
+    )
+
+    st.write(
+        f"**Candidate:** "
+        f"{explain_candidate['name']}"
+    )
+
+    st.write(
+        f"**AI Assessment:** "
+        f"{explanation['decision']}"
+    )
+
+    st.markdown("#### ✅ Why This Candidate Scored This Way")
+
+    for strength in explanation["strengths"]:
+        st.success(strength)
+
+    if explanation["matching_skills"]:
+
+        st.markdown("#### 💻 Matching Skills")
+
+        st.write(
+            ", ".join(
+                explanation["matching_skills"]
+            )
+        )
+
+    if explanation["weaknesses"]:
+
+        st.markdown("#### ⚠️ Areas Requiring Attention")
+
+        for weakness in explanation["weaknesses"]:
+            st.warning(weakness)
+
+    st.markdown("#### 📊 Transparent Score Contribution")
+
+    score_components = explanation["score_components"]
+
+    for component, value in score_components.items():
+
+        st.write(
+            f"**{component}:** {value}"
+        )
+
+else:
+
+    st.info(
+        "Explainable AI analysis will appear "
+        "after candidates are scored."
+    )
+
+
+# ============================================================
+# APPLICATION FOOTER
+# ============================================================
+
+st.markdown(
+    """
+    <div class="final-footer">
+        Smart Resume Screener · AI-powered recruitment analytics
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+# ============================================================
+# FINAL UI POLISH
+# ============================================================
+
+st.markdown("""
+<style>
+
+.block-container {
+    max-width: 1450px;
+    padding-top: 1.5rem;
+}
+
+/* Main buttons */
+.stButton > button {
+    width: 100%;
+    border-radius: 12px;
+    min-height: 45px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+}
+
+/* Download button */
+.stDownloadButton > button {
+    width: 100%;
+    border-radius: 12px;
+    min-height: 45px;
+    font-weight: 700;
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+    background: white;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+/* Metrics */
+[data-testid="stMetric"] {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+}
+
+/* Expanders */
+[data-testid="stExpander"] {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Tables */
+[data-testid="stDataFrame"] {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Text inputs */
+textarea,
+input {
+    border-radius: 12px !important;
+}
+
+/* Section spacing */
+h2, h3 {
+    margin-top: 25px;
+}
+
+/* Success / info boxes */
+[data-testid="stAlert"] {
+    border-radius: 12px;
+}
+
+/* Footer */
+.final-footer {
+    margin-top: 50px;
+    padding: 25px;
+    text-align: center;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+}
+
+
+
+/* ============================================================
+   FINAL UI READABILITY FIX
+   ============================================================ */
+
+/* Streamlit metric cards */
+[data-testid="stMetric"] {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 18px !important;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.06) !important;
+}
+
+[data-testid="stMetric"] label {
+    color: #64748b !important;
+}
+
+[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: #0f172a !important;
+}
+
+/* Streamlit expandable sections */
+[data-testid="stExpander"] {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+}
+
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary p {
+    color: #0f172a !important;
+}
+
+/* Dataframe */
+[data-testid="stDataFrame"] {
+    background: #ffffff !important;
+    border-radius: 14px !important;
+}
+
+/* Text inside white containers */
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown li {
+    color: inherit;
+}
+
+/* Candidate cards */
+.candidate-card {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+.candidate-card * {
+    color: #0f172a !important;
+}
+
+/* Metric labels and values */
+.metric-card {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+.metric-card .metric-label {
+    color: #64748b !important;
+}
+
+.metric-card .metric-value {
+    color: #0f172a !important;
+}
+
+/* Inputs */
+textarea,
+input {
+    color: #0f172a !important;
+    background: #ffffff !important;
+}
+
+/* Select boxes */
+[data-baseweb="select"] {
+    background: #ffffff !important;
+}
+
+[data-baseweb="select"] * {
+    color: #0f172a !important;
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-radius: 16px !important;
+}
+
+/* File uploader drop zone */
+[data-testid="stFileUploader"] section {
+    background: #ffffff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 14px !important;
+    padding: 16px !important;
+}
+
+/* Upload button */
+[data-testid="stFileUploader"] button {
+    background: #4f46e5 !important;
+    color: #ffffff !important;
+    border: 1px solid #4338ca !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+/* Upload button text */
+[data-testid="stFileUploader"] button span {
+    color: #ffffff !important;
+}
+
+/* Upload button icon */
+[data-testid="stFileUploader"] button svg {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Hover */
+[data-testid="stFileUploader"] button:hover {
+    background: #4338ca !important;
+    color: #ffffff !important;
+}
+
+/* Drag and drop text */
+[data-testid="stFileUploader"] section small,
+[data-testid="stFileUploader"] section span {
+    color: #334155 !important;
+}
+
+/* Uploaded file name */
+[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+/* Slider labels */
+[data-testid="stSlider"] label {
+    color: #f8fafc !important;
+}
+
+/* General headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #f8fafc !important;
+}
+
+/* Horizontal lines */
+hr {
+    border-color: #334155 !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
+    
+# ============================================================
+# FINAL UI CONTRAST FIX
+# ============================================================
+
+st.markdown("""
+<style>
+
+/* Fix metric visibility */
+[data-testid="stMetric"] {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 18px !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #475569 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #0f172a !important;
+}
+
+[data-testid="stMetricDelta"] {
+    color: #475569 !important;
+}
+
+/* Improve text visibility */
+[data-testid="stMetric"] p,
+[data-testid="stMetric"] div {
+    color: #0f172a !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
 

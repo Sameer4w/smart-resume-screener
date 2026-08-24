@@ -34,3 +34,7 @@ Thumbs.db
 
 # Runtime database files
 data/*.db
+*.pyc
+.ipynb_checkpoints/
+*.db
+streamlit.log
