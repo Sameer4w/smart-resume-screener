@@ -50,7 +50,7 @@ KNOWN_SKILLS = [
 SKILL_ALIASES = {
     "sql": ["sql"],
     "git": ["git"],
-    "rest api": ["rest api", "restful api", "restful", "rest"],
+    "rest api": ["rest api", "restful api", "restful", "rest", "restful services"],
 }
 
 
@@ -254,6 +254,7 @@ def calculate_score(
     # ---------------------------------------------------------
     # 2. Relevant experience / project evidence - 20%
     # ---------------------------------------------------------
+
     experience_keywords = [
         "experience",
         "developed",
@@ -264,31 +265,47 @@ def calculate_score(
         "internship",
         "application",
         "system",
+        "worked",
+        "created",
     ]
 
+    # Generic experience/project evidence
     experience_evidence = sum(
         1
         for word in experience_keywords
         if word in resume_lower
     )
 
-    experience_score = min(
-        experience_evidence / 5.0,
-        1.0
-    ) * 2.0
-
+    # Relevant technical skills supported by the resume
     if matching_skills:
         matching_skill_evidence = sum(
             1
             for skill in matching_skills
-            if skill.lower() in resume_lower
+            if contains_term(resume_text, skill)
         )
+    else:
+        matching_skill_evidence = 0
 
-        if matching_skill_evidence > 0:
-            experience_score = min(
-                2.0,
-                experience_score + 0.5
-            )
+    # Combine project evidence and relevant skill evidence.
+    #
+    # Maximum contribution is 2 points.
+    project_component = min(
+        experience_evidence / 5.0,
+        1.0
+    )
+
+    skill_component = (
+        matching_skill_evidence / len(matching_skills)
+        if matching_skills
+        else 0.0
+    )
+
+    experience_ratio = (
+        0.5 * project_component
+        + 0.5 * skill_component
+    )
+
+    experience_score = experience_ratio * 2.0
 
     # ---------------------------------------------------------
     # 3. Education relevance - 10%
@@ -391,16 +408,50 @@ def match_resume_to_job(
         job_description
     )
 
+    # Normalize skill aliases before matching
+    normalized_resume_skills = set()
+
+    for skill in resume_skills:
+        skill = skill.lower().strip()
+
+        if skill in {
+            "rest",
+            "restful",
+            "restful services",
+            "rest api",
+            "restful api",
+        }:
+            normalized_resume_skills.add("rest api")
+        else:
+            normalized_resume_skills.add(skill)
+
+    normalized_required_skills = []
+
+    for skill in required_skills:
+        skill = skill.lower().strip()
+
+        if skill in {
+            "rest",
+            "restful",
+            "restful services",
+            "rest api",
+            "restful api",
+        }:
+            skill = "rest api"
+
+        if skill not in normalized_required_skills:
+            normalized_required_skills.append(skill)
+
     matching_skills = [
         skill
-        for skill in required_skills
-        if skill in resume_skills
+        for skill in normalized_required_skills
+        if skill in normalized_resume_skills
     ]
 
     missing_skills = [
         skill
-        for skill in required_skills
-        if skill not in resume_skills
+        for skill in normalized_required_skills
+        if skill not in normalized_resume_skills
     ]
 
     score_breakdown = calculate_score(

@@ -170,7 +170,6 @@ if job_description.strip() and uploaded_files:
                     match_result = match_resume_to_job(
                         resume_text=resume_text,
                         job_description=job_description,
-                        resume_skills=candidate["skills"],
                     )
 
                     save_match_result(
